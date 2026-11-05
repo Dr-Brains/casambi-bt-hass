@@ -47,11 +47,20 @@ _LOGGER = logging.getLogger(__name__)
 def _is_cover_unit(unit: Unit) -> bool:
     """Return True if the unit should be treated as a cover (blind/shutter).
 
-    Cover units are identified by having an EXT/ mode (externally controlled
-    actuator) combined with a DIMMER control (position feedback).
+    Legacy cover units are identified by having an EXT/ mode (externally
+    controlled actuator) combined with a DIMMER control and no TEMPERATURE
+    control.
+
+    Hybrid devices such as Illumy expose both DIMMER and TEMPERATURE while also
+    carrying a folded-blinds position in raw state. Those must still create a
+    light entity, so they are not treated as pure covers here.
     """
     controls = {c.type for c in unit.unitType.controls}
-    return unit.unitType.mode.startswith("EXT/") and UnitControlType.DIMMER in controls
+    return (
+        unit.unitType.mode.startswith("EXT/")
+        and UnitControlType.DIMMER in controls
+        and UnitControlType.TEMPERATURE not in controls
+    )
 
 
 def _is_sensor_platform_unit(unit: Unit) -> bool:
