@@ -167,7 +167,6 @@ class CasambiIllumyFoldCover(CasambiUnitEntity, CoverEntity):
         self._attr_supported_features = (
             CoverEntityFeature.OPEN
             | CoverEntityFeature.CLOSE
-            | CoverEntityFeature.SET_POSITION
         )
 
     def _raw_position(self) -> int | None:
@@ -185,7 +184,9 @@ class CasambiIllumyFoldCover(CasambiUnitEntity, CoverEntity):
         raw_pos = self._raw_position()
         if raw_pos is None:
             return None
-        return round(raw_pos * 100 / _ILLUMY_FOLD_MAX_RAW)
+        # Illumy semantics are inverted vs HA cover position.
+        # raw max means physically closed; HA 100 means open.
+        return 100 - round(raw_pos * 100 / _ILLUMY_FOLD_MAX_RAW)
 
     @property
     def is_closed(self) -> bool | None:
@@ -204,7 +205,8 @@ class CasambiIllumyFoldCover(CasambiUnitEntity, CoverEntity):
             return
 
         clamped = max(0, min(100, position))
-        raw_target = round(clamped * _ILLUMY_FOLD_MAX_RAW / 100)
+        # Invert HA position to Illumy raw state.
+        raw_target = round((100 - clamped) * _ILLUMY_FOLD_MAX_RAW / 100)
         raw = bytearray(unit.state.raw_state)
         _write_bits(raw, _ILLUMY_FOLD_BITS_OFFSET, _ILLUMY_FOLD_BITS_LENGTH, raw_target)
         await _send_raw_state(self._api, unit, raw)

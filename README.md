@@ -1,20 +1,32 @@
-# Casambi Bluetooth Revamped
+# Casambi Bluetooth - Luxlight Illumy Custom Implementation
 
 [![Discord](https://img.shields.io/discord/1186445089317326888)](https://discord.gg/jgZVugfx)
 
-An enhanced fork of the [original Casambi Bluetooth integration](https://github.com/lkempf/casambi-bt-hass) by [@lkempf](https://github.com/lkempf), with additional features for better switch and relay support.
+A custom implementation of the [original Casambi Bluetooth integration](https://github.com/lkempf/casambi-bt-hass) by [@lkempf](https://github.com/lkempf), focused on reliable Home Assistant support for **Luxlight Illumy** devices.
 
-> ⚠️ **DEVELOPMENT WARNING**: This repository is used as a development environment. Things might break at any moment. It's recommended to wait at least 1 day after a new release before updating to ensure stability. All stable changes will be merged back to the original repository.
-> 
-> **When to use this fork**: Use this version if you need Classic firmware support, want to use Casambi switches in Home Assistant (usable but still being improved), or need relay support. Otherwise, stick with the original integration.
+Primary target in this repository:
+- Luxlight Illumy hybrid unit support (brightness + color temperature + folded blinds on one device)
+
+> ⚠️ **DEVELOPMENT WARNING**: This repository is used as a development environment. Things might break at any moment.
+>
+> **Scope note**: This branch is optimized for Luxlight Illumy behavior. If you need a broad, general-purpose Casambi setup, prefer the original upstream integration.
 
 ## What's Enhanced
 
 - **Classic protocol support** - Lighting fixtures on Classic (legacy) Casambi firmware networks: on/off, dimming, and live state sync from the Casambi app. More testers welcome!
+- **Luxlight Illumy hybrid mapping** - Treats Illumy as a combined light + folded blinds device with corrected open/close direction and full-open/full-close operation
 - **Switch event support** - Physical switch button press/hold/release events (wired + wireless)
 - **Automation blueprints** - Ready-to-use blueprints for button automations
 - **Fixed relay status** - Properly reports the status of relay units (also merged to the original integration)
 - **Based on casambi-bt-revamped** - Uses an enhanced version of the underlying library (protocol-level INVOCATION parsing)
+
+## Luxlight Illumy Behavior
+
+For Luxlight Illumy units that expose brightness, color temperature, and folded blinds in one Casambi unit:
+- A **light** entity is created for brightness and color temperature
+- A **cover** entity is created for folded blinds
+- Cover controls are optimized for **fully open / fully closed** operation
+- Open/close direction is mapped to physical Illumy behavior
 
 ## Quick Start
 
@@ -124,6 +136,7 @@ Import ready-to-use blueprints with one click:
 [**→ Blueprint Documentation & Examples**](docs/BLUEPRINTS.md)
 
 ### 💡 Supported Devices
+- **Luxlight Illumy** (custom hybrid support: light + folded blinds on one unit)
 - Lights (dimmer, color, temperature, on/off)
 - Light groups
 - Scenes
